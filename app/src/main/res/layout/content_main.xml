@@ -13,82 +13,61 @@
     tools:context="com.example.ffrae_000.memo.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ImageButton
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_dialog_email"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/imageButton3" />
+        android:orientation="vertical">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_delete"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/imageButton5" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Textmemo"
+                android:drawableLeft="@android:drawable/ic_dialog_email"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/buttonMemo0"
+                android:layout_toLeftOf="@+id/buttonMemo0Delete" />
 
-    <TextView
-        android:text="Textmemo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageButton3"
-        android:layout_marginBottom="13dp"
-        android:id="@+id/textView2"
-        android:textAppearance="@android:style/TextAppearance.Material.Large"
-        android:layout_toLeftOf="@+id/imageButton5"
-        android:layout_toRightOf="@+id/imageButton3"
-        android:layout_toEndOf="@+id/imageButton3" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/ic_menu_delete"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/buttonMemo0Delete" />
+        </RelativeLayout>
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_media_play"
-        android:layout_below="@+id/imageButton3"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/imageButton6" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Audiomemo"
+                android:drawableLeft="@android:drawable/ic_media_play"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/buttonMemo1"
+                android:layout_toLeftOf="@+id/buttonMemo1Delete"/>
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_delete"
-        android:layout_below="@+id/imageButton5"
-        android:layout_alignLeft="@+id/imageButton5"
-        android:layout_alignStart="@+id/imageButton5"
-        android:id="@+id/imageButton7" />
-
-    <TextView
-        android:text="Audiomemo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageButton6"
-        android:layout_toRightOf="@+id/imageButton6"
-        android:layout_toEndOf="@+id/imageButton6"
-        android:layout_marginBottom="16dp"
-        android:id="@+id/textView3"
-        android:textAppearance="@android:style/TextAppearance.Material.Large" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_share"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imageButton5"
-        android:layout_toStartOf="@+id/imageButton5"
-        android:id="@+id/imageButton12" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_share"
-        android:layout_below="@+id/imageButton12"
-        android:layout_toLeftOf="@+id/imageButton7"
-        android:layout_toStartOf="@+id/imageButton7"
-        android:id="@+id/imageButton13" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/ic_menu_delete"
+                android:id="@+id/buttonMemo1Delete"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <Button
         android:text="Pop-Up-Audio-Player/\n\n Pop-Up-Auswahlbildschirm-Add\n"

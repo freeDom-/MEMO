@@ -1,6 +1,5 @@
 package com.example.ffrae_000.memo;
 
 
-
-public class TextMemo {
+public class TextMemo extends Memo {
 }
