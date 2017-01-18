@@ -6,6 +6,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.thoughtworks.xstream.XStream;
@@ -50,13 +53,11 @@ public class MainActivity extends AppCompatActivity {
             buildLayout();
         }
 
-        FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
+        final FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Create PopUp for adding a Memo here
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                addMemoPopup(fabAdd);
             }
         });
     }
@@ -83,6 +84,33 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Get result from TextActivity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if(resultCode == 1337){
+            // Save pressed
+            TextMemo memo = (TextMemo) intent.getSerializableExtra("TextMemo");
+            memos.remove(memo.getId());
+            memos.add(memo);
+            saveAll();
+            rebuildLayout();
+        }
+    }
+
+    private void addMemoPopup(View caller) {
+        // TODO: Optimize PopUp for adding a Memo here - betterlooking and better positioning
+        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.add_memo_popup, null);
+        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                  LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.setFocusable(true);
+        popupWindow.showAtLocation(caller, Gravity.CENTER, 0, 0);
+
+        // TODO: Add OnClickListeners for the PopUp buttons
+    }
+
     private void rebuildLayout() {
         memos.clear();
         ((ViewGroup) findViewById(R.id.linearLayoutContent)).removeAllViews();
@@ -101,20 +129,6 @@ public class MainActivity extends AppCompatActivity {
 
         for(Memo m : memos) {
             addButtons(m);
-        }
-    }
-
-    // Get result from TextActivity
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if(resultCode == 1337){
-            // Save pressed
-            TextMemo memo = (TextMemo) intent.getSerializableExtra("TextMemo");
-            memos.remove(memo.getId());
-            memos.add(memo);
-            saveAll();
-            rebuildLayout();
         }
     }
 
