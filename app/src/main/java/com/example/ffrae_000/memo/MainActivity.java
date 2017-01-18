@@ -1,14 +1,15 @@
 package com.example.ffrae_000.memo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Xml;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -16,19 +17,14 @@ import android.widget.RelativeLayout;
 
 import com.thoughtworks.xstream.XStream;
 
-import org.xmlpull.v1.XmlSerializer;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,9 +39,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         load();
+        memos.add(new TextMemo(memos.size(), "TextTest"));
+        memos.add(new TextMemo(memos.size(), "Text2Test"));
+        memos.add(new AudioMemo(memos.size(), "AudioTest"));
+        memos.add(new TextMemo(memos.size(), "Text3Test"));
 
         for(Memo m : memos) {
-            addLayout(m);
+            addButtons(m);
         }
 
         FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
@@ -81,45 +81,70 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addLayout(Memo m) {
+    private void addButtons(final Memo m) {
         LinearLayout llContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
-        RelativeLayout rl = new RelativeLayout(this);
+        final RelativeLayout rl = new RelativeLayout(this);
         rl.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
 
         // Create buttons
-        Button memoBtn = new Button(this);
+        final Button memoBtn = new Button(this);
         memoBtn.setId(10000 + m.getId());
         ImageButton deleteBtn = new ImageButton(this);
         deleteBtn.setId(20000 + m.getId());
 
-        // Set layout for Memobutton
+        // Set layout for memoBtn
         memoBtn.setText(m.getName());
         memoBtn.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
-            /* TODO: add following attributes to Memobutton
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/buttonMemo0Delete" for button
-             */
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) memoBtn.getLayoutParams();
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        params.addRule(RelativeLayout.LEFT_OF, deleteBtn.getId());
+        memoBtn.setLayoutParams(params);
 
         if(m instanceof TextMemo) {
-            // TODO: add android:drawableLeft="@android:drawable/ic_dialog_email"
+            memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_email, 0, 0, 0);
+            // Set OnClickListener
+            memoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), TextActivity.class);
+                    intent.putExtra("TextMemo", m);
+                    startActivityForResult(intent, 1337);
+                }
+            });
         }
         else {
-            // TODO: add android:drawableLeft="@android:drawable/ic_media_play"
+            memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_media_play, 0, 0, 0);
+            // Set OnClickListener
+            memoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TODO: show popup for audio playback
+                }
+            });
         }
 
-        // Set layout for Deletebutton
+        // Set layout for deleteBtn
         deleteBtn.setImageResource(android.R.drawable.ic_menu_delete);
         deleteBtn.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
-            /* TODO: add following attributes to Deletebutton
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-            */
+        params = (RelativeLayout.LayoutParams) deleteBtn.getLayoutParams();
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        deleteBtn.setLayoutParams(params);
+
+        // Set OnClickListener for deleteBtn
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                memos.remove(m.getId());
+                // TODO: program crashing when removing first memo before second memo
+                ((ViewGroup) memoBtn.getParent()).removeAllViews();
+                ((ViewGroup) rl.getParent()).removeView(rl);
+            }
+        });
 
         // Add buttons to RelativeLayout
         rl.addView(memoBtn);
