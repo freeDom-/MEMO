@@ -1,9 +1,8 @@
 package com.example.ffrae_000.memo;
 
-
 import java.util.Date;
 
-public class Memo implements java.io.Serializable {
+public class Memo implements java.io.Serializable, Comparable<Memo> {
     
     private int id;
     private String name;
@@ -13,6 +12,10 @@ public class Memo implements java.io.Serializable {
         this.id = id;
         this.name = name;
         this.date = new Date();
+    }
+
+    public int compareTo(Memo m) {
+        return date.compareTo(m.getDate());
     }
 
     public int getId() {

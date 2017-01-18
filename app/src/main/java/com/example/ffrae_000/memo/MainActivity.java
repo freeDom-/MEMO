@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,17 +37,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
-        load();
-        memos.add(new TextMemo(memos.size(), "TextTest"));
-        memos.add(new TextMemo(memos.size(), "Text2Test"));
-        memos.add(new AudioMemo(memos.size(), "AudioTest"));
-        memos.add(new TextMemo(memos.size(), "Text3Test"));
-
-        for(Memo m : memos) {
-            addButtons(m);
+        buildLayout();
+        // TODO: remove example data
+        if(memos.size() == 0) {
+            memos.add(new TextMemo(memos.size(), "TextTest"));
+            ((TextMemo) memos.get(0)).setData("Lorem Ipsum");
+            memos.add(new AudioMemo(memos.size(), "AudioTest"));
+            memos.add(new TextMemo(memos.size(), "Text2Test"));
+            buildLayout();
         }
 
         FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
@@ -79,6 +81,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void rebuildLayout() {
+        memos.clear();
+        ((ViewGroup) findViewById(R.id.linearLayoutContent)).removeAllViews();
+        buildLayout();
+    }
+
+    private void buildLayout() {
+        loadAll();
+        Collections.sort(memos, new Comparator<Memo>() {
+            @Override
+            public int compare(Memo memo, Memo t1) {
+                // sort inverse -> newest entry will be first
+                return t1.compareTo(memo);
+            }
+        });
+
+        for(Memo m : memos) {
+            addButtons(m);
+        }
+    }
+
+    // Get result from TextActivity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if(resultCode == 1337){
+            // Save pressed
+            TextMemo memo = (TextMemo) intent.getSerializableExtra("TextMemo");
+            memos.remove(memo.getId());
+            memos.add(memo);
+            saveAll();
+            rebuildLayout();
+        }
     }
 
     private void addButtons(final Memo m) {
@@ -139,10 +176,9 @@ public class MainActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                memos.remove(m.getId());
-                // TODO: program crashing when removing first memo before second memo
-                ((ViewGroup) memoBtn.getParent()).removeAllViews();
-                ((ViewGroup) rl.getParent()).removeView(rl);
+                memos.remove(m);
+                saveAll();
+                rebuildLayout();
             }
         });
 
@@ -154,16 +190,15 @@ public class MainActivity extends AppCompatActivity {
         llContent.addView(rl);
     }
 
-    private void save() {
+    private void saveAll() {
         File file = new File(getFilesDir().getPath() + "/memo_data.xml");
         XStream xstream = new XStream();
-
 
         try {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = xstream.createObjectOutputStream(fos);
 
-            for (Memo m : memos) {
+            for(Memo m : memos) {
                 oos.writeObject(m);
             }
             oos.flush();
@@ -174,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void load() {
+    private void loadAll() {
         XStream xstream = new XStream();
         File file = new File(getFilesDir().getPath() + "/memo_data.xml");
         if(file.exists()) {

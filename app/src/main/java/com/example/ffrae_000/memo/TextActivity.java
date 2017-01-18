@@ -27,15 +27,12 @@ public class TextActivity extends AppCompatActivity {
         // Load text from Memo
         etData = (EditText) findViewById(R.id.editTextData);
         etData.setText(memo.getData());
-        etData.setKeyListener(null);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         FloatingActionButton fabSave = (FloatingActionButton) findViewById(R.id.fabSave);
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println("clicked");
                 // Save data into the object and return code 1337 for saving the changes to a file
                 memo.setData(etData.getText().toString());
                 memo.setDate(new Date());
@@ -44,14 +41,6 @@ public class TextActivity extends AppCompatActivity {
                 intent.putExtra("TextMemo", memo);
                 setResult(1337, intent);
                 finish();
-            }
-        });
-
-        FloatingActionButton fabEdit = (FloatingActionButton) findViewById(R.id.fabEdit);
-        fabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                etData.setKeyListener((KeyListener) etData.getTag());
             }
         });
     }

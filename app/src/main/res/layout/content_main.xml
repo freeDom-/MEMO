@@ -13,66 +13,19 @@
     tools:context="com.example.ffrae_000.memo.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linearLayoutContent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Textmemo"
-                android:drawableLeft="@android:drawable/ic_dialog_email"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/buttonMemo0"
-                android:layout_toLeftOf="@+id/buttonMemo0Delete" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/linearLayoutContent">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_menu_delete"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/buttonMemo0Delete" />
-        </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Audiomemo"
-                android:drawableLeft="@android:drawable/ic_media_play"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/buttonMemo1"
-                android:layout_toLeftOf="@+id/buttonMemo1Delete"/>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_menu_delete"
-                android:id="@+id/buttonMemo1Delete"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
-    </LinearLayout>
-
-    <Button
-        android:text="Pop-Up-Audio-Player/\n\n Pop-Up-Auswahlbildschirm-Add\n"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button3"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>
