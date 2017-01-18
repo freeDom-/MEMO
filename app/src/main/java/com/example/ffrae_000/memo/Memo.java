@@ -3,7 +3,7 @@ package com.example.ffrae_000.memo;
 
 import java.util.Date;
 
-public class Memo {
+public class Memo implements java.io.Serializable {
     
     private int id;
     private String name;
