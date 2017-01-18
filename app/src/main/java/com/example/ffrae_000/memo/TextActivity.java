@@ -10,6 +10,8 @@ import android.text.method.KeyListener;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.Date;
+
 public class TextActivity extends AppCompatActivity {
 
     private TextMemo memo;
@@ -37,6 +39,7 @@ public class TextActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Save data into the object and return code 1337 for saving the changes to a file
                 memo.setData(etData.getText().toString());
+                memo.setDate(new Date());
 
                 Intent intent = new Intent();
                 intent.putExtra("TextMemo", memo);

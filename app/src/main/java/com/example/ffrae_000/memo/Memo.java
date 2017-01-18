@@ -15,6 +15,10 @@ public class Memo implements java.io.Serializable {
         this.date = new Date();
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
