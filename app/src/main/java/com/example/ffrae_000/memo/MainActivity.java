@@ -1,5 +1,7 @@
 package com.example.ffrae_000.memo;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -30,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -91,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode == 1337){
             // Save pressed
             TextMemo memo = (TextMemo) intent.getSerializableExtra("TextMemo");
-            memos.remove(memo.getId());
-            memos.add(memo);
+            // replace old memo by edited one returned from intent
+            memos.set(memo.getId(), memo);
             saveAll();
             rebuildLayout();
         }
@@ -103,12 +107,43 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = layoutInflater.inflate(R.layout.add_memo_popup, null);
-        PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,
+        final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,
                                                   LinearLayout.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(caller, Gravity.CENTER, 0, 0);
 
-        // TODO: Add OnClickListeners for the PopUp buttons
+        Button createTextMemo = (Button) popupView.findViewById(R.id.buttonCreateTextMemo);
+        Button createAudioMemo = (Button) popupView.findViewById(R.id.buttonCreateAudioMemo);
+
+        createTextMemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText input = new EditText(getApplicationContext());
+                // TODO: keine Zeilenumbrüche (Enter) im EditText zulassen! Nur gültige Dateinamen Zulassen!
+
+                showAlert("Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        // TODO: Create new TextMemo and open it
+                        TextMemo m = new TextMemo(memos.size(), input.getText().toString());
+                        memos.add(memos.size(), m);
+                        saveAll();
+                        // Start TextActivity
+                        Intent intent = new Intent(getApplicationContext(), TextActivity.class);
+                        intent.putExtra("TextMemo", m);
+                        startActivityForResult(intent, 1337);
+                        popupWindow.dismiss();
+                        return null;
+                    }
+                });
+            }
+        });
+        createAudioMemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: Create AudioMemo
+            }
+        });
     }
 
     private void rebuildLayout() {
@@ -130,6 +165,40 @@ public class MainActivity extends AppCompatActivity {
         for(Memo m : memos) {
             addButtons(m);
         }
+    }
+
+    private void showAlert(String message, String positive, String negative, View view,
+                           final Callable<Void> result) {
+        // String negative, View view, Callable function must be null if not used
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage(message);
+        alert.setPositiveButton(positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                if(result != null) {
+                    try {
+                        result.call();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        if(negative != null) {
+            alert.setNegativeButton(negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+        }
+        if(view != null) {
+            alert.setView(view);
+        }
+
+        alert.create();
+        alert.show();
     }
 
     private void addButtons(final Memo m) {
@@ -190,10 +259,16 @@ public class MainActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Delete Request
-                memos.remove(m);
-                saveAll();
-                rebuildLayout();
+                showAlert("Do you really want to delete " + m.getName() + "?", "Yes",
+                          "No", null, new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        memos.remove(m);
+                        saveAll();
+                        rebuildLayout();
+                        return null;
+                    }
+                });
             }
         });
 
