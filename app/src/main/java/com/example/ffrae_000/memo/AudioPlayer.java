@@ -15,26 +15,13 @@ import java.io.IOException;
 public class AudioPlayer {
     private MediaPlayer mP;
 
-    public AudioPlayer(String path){
+    public AudioPlayer(String path) throws FileNotFoundException{
         mP = new MediaPlayer();
         try{
             mP.setDataSource(path);
             mP.prepare();
         }
-/*        catch(FileNotFoundException e){
-            AlertDialog.Builder missingFile = new AlertDialog.Builder(R.layout.activity_main);
-            missingFile.setMessage("File not found!");
-            missingFile.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            });
-            missingFile.create();
-            missingFile.show();
-
-        }
-         */catch (IOException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }

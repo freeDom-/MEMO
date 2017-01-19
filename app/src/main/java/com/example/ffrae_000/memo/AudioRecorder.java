@@ -73,6 +73,7 @@ public class AudioRecorder {
             FileInputStream fis = new FileInputStream("/temp.3CPP");
             FileOutputStream fos = new FileOutputStream(path);
             fos.write(fis.read());
+            //TODO: try to delete the temp file
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -190,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //TODO: Delete Request
                 memos.remove(m);
                 saveAll();
                 rebuildLayout();
