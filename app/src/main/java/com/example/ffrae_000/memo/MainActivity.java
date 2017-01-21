@@ -1,6 +1,7 @@
 package com.example.ffrae_000.memo;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addMemoPopup(View caller) {
         // TODO: Optimize PopUp for adding a Memo here - betterlooking and better positioning
+        // use Alert aswell???
         LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = layoutInflater.inflate(R.layout.add_memo_popup, null);
@@ -121,13 +123,14 @@ public class MainActivity extends AppCompatActivity {
                 final EditText input = new EditText(getApplicationContext());
                 // TODO: keine Zeilenumbrüche (Enter) im EditText zulassen! Nur gültige Dateinamen Zulassen!
 
-                showAlert("Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
+                Helpers.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
                         // TODO: Create new TextMemo and open it
                         TextMemo m = new TextMemo(memos.size(), input.getText().toString());
                         memos.add(memos.size(), m);
                         saveAll();
+                        rebuildLayout();
                         // Start TextActivity
                         Intent intent = new Intent(getApplicationContext(), TextActivity.class);
                         intent.putExtra("TextMemo", m);
@@ -154,51 +157,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void buildLayout() {
         loadAll();
-        Collections.sort(memos, new Comparator<Memo>() {
+        List<Memo> temp = new LinkedList<>(memos);
+        Collections.sort(temp, new Comparator<Memo>() {
             @Override
             public int compare(Memo memo, Memo t1) {
-                // sort inverse -> newest entry will be first
+                // sort by date inverse -> newest entry will be first
                 return t1.compareTo(memo);
             }
         });
 
-        for(Memo m : memos) {
+        for(Memo m : temp) {
             addButtons(m);
         }
-    }
-
-    private void showAlert(String message, String positive, String negative, View view,
-                           final Callable<Void> result) {
-        // String negative, View view, Callable function must be null if not used
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setMessage(message);
-        alert.setPositiveButton(positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                if(result != null) {
-                    try {
-                        result.call();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        if(negative != null) {
-            alert.setNegativeButton(negative, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            });
-        }
-        if(view != null) {
-            alert.setView(view);
-        }
-
-        alert.create();
-        alert.show();
     }
 
     private void addButtons(final Memo m) {
@@ -259,8 +229,8 @@ public class MainActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlert("Do you really want to delete " + m.getName() + "?", "Yes",
-                          "No", null, new Callable<Void>() {
+                Helpers.showAlert(MainActivity.this, "Do you really want to delete " + m.getName() + "?",
+                                  "Yes", "No", null, new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
                         memos.remove(m);
