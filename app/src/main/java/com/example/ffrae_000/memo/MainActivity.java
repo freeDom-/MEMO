@@ -1,12 +1,8 @@
 package com.example.ffrae_000.memo;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         buildLayout();
         // TODO: remove example data
-        if(memos.size() == 0) {
+        if (memos.size() == 0) {
             memos.add(new TextMemo(memos.size(), "TextTest"));
             ((TextMemo) memos.get(0)).setData("Lorem Ipsum");
             memos.add(new AudioMemo(memos.size(), "AudioTest"));
@@ -93,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if(resultCode == 1337){
+        if (resultCode == 1337) {
             // Save pressed
             TextMemo memo = (TextMemo) intent.getSerializableExtra("TextMemo");
             // replace old memo by edited one returned from intent
@@ -110,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = layoutInflater.inflate(R.layout.add_memo_popup, null);
         final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,
-                                                  LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.WRAP_CONTENT);
         popupWindow.setFocusable(true);
         popupWindow.showAtLocation(caller, Gravity.CENTER, 0, 0);
 
@@ -166,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        for(Memo m : temp) {
+        for (Memo m : temp) {
             addButtons(m);
         }
     }
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         params.addRule(RelativeLayout.LEFT_OF, deleteBtn.getId());
         memoBtn.setLayoutParams(params);
 
-        if(m instanceof TextMemo) {
+        if (m instanceof TextMemo) {
             memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_email, 0, 0, 0);
             // Set OnClickListener
             memoBtn.setOnClickListener(new View.OnClickListener() {
@@ -204,8 +200,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, 1337);
                 }
             });
-        }
-        else {
+        } else {
             memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_media_play, 0, 0, 0);
             // Set OnClickListener
             memoBtn.setOnClickListener(new View.OnClickListener() {
@@ -230,15 +225,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Helpers.showAlert(MainActivity.this, "Do you really want to delete " + m.getName() + "?",
-                                  "Yes", "No", null, new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        memos.remove(m);
-                        saveAll();
-                        rebuildLayout();
-                        return null;
-                    }
-                });
+                        "Yes", "No", null, new Callable<Void>() {
+                            @Override
+                            public Void call() throws Exception {
+                                memos.remove(m);
+                                saveAll();
+                                rebuildLayout();
+                                return null;
+                            }
+                        });
             }
         });
 
@@ -258,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = xstream.createObjectOutputStream(fos);
 
-            for(Memo m : memos) {
+            for (Memo m : memos) {
                 oos.writeObject(m);
             }
             oos.flush();
@@ -272,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadAll() {
         XStream xstream = new XStream();
         File file = new File(getFilesDir().getPath() + "/memo_data.xml");
-        if(file.exists()) {
+        if (file.exists()) {
             try {
                 FileInputStream fis = openFileInput("memo_data.xml");
                 Memo memoTemp;

@@ -2,8 +2,8 @@ package com.example.ffrae_000.memo;
 
 import java.util.Date;
 
-public class Memo implements java.io.Serializable, Comparable<Memo> {
-    
+class Memo implements java.io.Serializable, Comparable<Memo> {
+
     private int id;
     private String name;
     private Date date;

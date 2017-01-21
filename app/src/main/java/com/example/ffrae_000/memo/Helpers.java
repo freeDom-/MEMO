@@ -7,10 +7,10 @@ import android.view.View;
 
 import java.util.concurrent.Callable;
 
-public abstract class Helpers {
+abstract class Helpers {
 
-    public final static void showAlert(Context context, String message, String positive, String negative,
-                                 View view, final Callable<Void> result) {
+    static void showAlert(Context context, String message, String positive, String negative,
+                                       View view, final Callable<Void> result) {
         // String negative, View view, Callable function must be null if not used
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setMessage(message);
@@ -18,7 +18,7 @@ public abstract class Helpers {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                if(result != null) {
+                if (result != null) {
                     try {
                         result.call();
                     } catch (Exception e) {
@@ -27,7 +27,7 @@ public abstract class Helpers {
                 }
             }
         });
-        if(negative != null) {
+        if (negative != null) {
             alert.setNegativeButton(negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -35,7 +35,7 @@ public abstract class Helpers {
                 }
             });
         }
-        if(view != null) {
+        if (view != null) {
             alert.setView(view);
         }
 

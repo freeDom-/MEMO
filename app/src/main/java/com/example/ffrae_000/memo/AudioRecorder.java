@@ -6,21 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by sir_cancle_a_lot on 19.01.17.
- */
-
 public class AudioRecorder {
     private MediaRecorder mR = null;
     private boolean isStarted = false;
     private boolean isPaused = false;
 
 
-    public AudioRecorder(){
+    public AudioRecorder() {
         setRecorder();
     }
 
-    public void setRecorder(){
+    public void setRecorder() {
         mR = new MediaRecorder();
         mR.setAudioSource(MediaRecorder.AudioSource.MIC);
         mR.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -28,13 +24,12 @@ public class AudioRecorder {
         mR.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
             mR.prepare();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.print("Couldn't prepare!!!!");
         }
     }
 
-    public void startRecord(){
+    public void startRecord() {
         mR.start();
         isStarted = true;
     }
@@ -55,14 +50,14 @@ public class AudioRecorder {
 */
 
 
-    public  void stopRecord(){
+    public void stopRecord() {
         mR.stop();
         mR.release();
         isStarted = false;
         isPaused = false;
     }
 
-    public void resetRecorder(){
+    public void resetRecorder() {
         mR.release();
         mR = null;
         setRecorder();
