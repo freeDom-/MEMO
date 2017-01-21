@@ -6,10 +6,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
 import java.util.Date;
+import java.util.concurrent.Callable;
 
 public class TextActivity extends AppCompatActivity {
 
@@ -45,4 +47,22 @@ public class TextActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // if text was edited show popup question
+            if(memo.getData().compareTo(etData.getText().toString()) != 0) {
+                Helpers.showAlert(TextActivity.this, "Are you sure? All changes won't be saved!",
+                        "Yes", "Cancel", null, new Callable<Void>() {
+                            @Override
+                            public Void call() throws Exception {
+                                finish();
+                                return null;
+                            }
+                        });
+                return false;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }
