@@ -1,12 +1,11 @@
 package com.example.ffrae_000.memo;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.thoughtworks.xstream.XStream;
@@ -100,24 +98,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addMemoPopup(View caller) {
-        // TODO: Optimize PopUp for adding a Memo here - betterlooking and better positioning
-        // use Alert aswell???
-        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
-                .getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.add_memo_popup, null);
-        final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.setFocusable(true);
-        popupWindow.showAtLocation(caller, Gravity.CENTER, 0, 0);
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        Button createTextMemo = new Button(this);
+        createTextMemo.setText("Create Textmemo");
+        Button createAudioMemo = new Button(this);
+        createAudioMemo.setText("Create Audiomemo");
 
-        Button createTextMemo = (Button) popupView.findViewById(R.id.buttonCreateTextMemo);
-        Button createAudioMemo = (Button) popupView.findViewById(R.id.buttonCreateAudioMemo);
+        linearLayout.addView(createTextMemo);
+        linearLayout.addView(createAudioMemo);
+        final AlertDialog alert = Helpers.showAlert(MainActivity.this, "Choose the memo type:", null, "Cancel", linearLayout, null);
 
         createTextMemo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final EditText input = new EditText(getApplicationContext());
-                // TODO: keine Zeilenumbrüche (Enter) im EditText zulassen! Nur gültige Dateinamen Zulassen!
+                input.setSingleLine();
 
                 Helpers.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
                     @Override
@@ -130,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), TextActivity.class);
                         intent.putExtra("TextMemo", m);
                         startActivityForResult(intent, 1337);
-                        popupWindow.dismiss();
+                        // Close opened alert
+                        alert.dismiss();
                         return null;
                     }
                 });

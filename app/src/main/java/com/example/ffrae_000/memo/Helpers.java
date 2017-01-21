@@ -9,26 +9,28 @@ import java.util.concurrent.Callable;
 
 abstract class Helpers {
 
-    static void showAlert(Context context, String message, String positive, String negative,
-                                       View view, final Callable<Void> result) {
+    static AlertDialog showAlert(Context context, String message, String positive, String negative,
+                                 View view, final Callable<Void> result) {
         // String negative, View view, Callable function must be null if not used
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setMessage(message);
-        alert.setPositiveButton(positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                if (result != null) {
-                    try {
-                        result.call();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message);
+        if (positive != null) {
+            builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                    if (result != null) {
+                        try {
+                            result.call();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
         if (negative != null) {
-            alert.setNegativeButton(negative, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
@@ -36,10 +38,11 @@ abstract class Helpers {
             });
         }
         if (view != null) {
-            alert.setView(view);
+            builder.setView(view);
         }
 
-        alert.create();
+        AlertDialog alert = builder.create();
         alert.show();
+        return alert;
     }
 }
