@@ -83,32 +83,34 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Get result from TextActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        // Gets result from TextActivity
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode == 1337) {
             // Save pressed
             TextMemo memo = (TextMemo) intent.getSerializableExtra("TextMemo");
-            // replace old memo by edited one returned from intent
+            // Replaces old memo by edited one returned by intent
             memos.set(memo.getId(), memo);
             saveAll();
-            rebuildLayout();
+            buildLayout();
         }
     }
 
     private void addMemoPopup(View caller) {
+        // Create View for Helpers.showAlert() method
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         Button createTextMemo = new Button(this);
         createTextMemo.setText("Create Textmemo");
         Button createAudioMemo = new Button(this);
         createAudioMemo.setText("Create Audiomemo");
-
+        // Add buttons to linearLayout and show alert
         linearLayout.addView(createTextMemo);
         linearLayout.addView(createAudioMemo);
         final AlertDialog alert = Helpers.showAlert(MainActivity.this, "Choose the memo type:", null, "Cancel", linearLayout, null);
 
+        // Add OnClickListeners to Buttons
         createTextMemo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                         TextMemo m = new TextMemo(memos.size(), input.getText().toString());
                         memos.add(memos.size(), m);
                         saveAll();
-                        rebuildLayout();
+                        buildLayout();
                         // Start TextActivity
                         Intent intent = new Intent(getApplicationContext(), TextActivity.class);
                         intent.putExtra("TextMemo", m);
@@ -141,14 +143,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void rebuildLayout() {
+    private void buildLayout() {
+        // Clear old data
         memos.clear();
         ((ViewGroup) findViewById(R.id.linearLayoutContent)).removeAllViews();
-        buildLayout();
-    }
-
-    private void buildLayout() {
+        // Load data
         loadAll();
+        // Create a copy of the data and sort it
         List<Memo> temp = new LinkedList<>(memos);
         Collections.sort(temp, new Comparator<Memo>() {
             @Override
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 return t1.compareTo(memo);
             }
         });
-
+        // Iterate through the sorted copy and create the GUI buttons
         for (Memo m : temp) {
             addButtons(m);
         }
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                             public Void call() throws Exception {
                                 memos.remove(m);
                                 saveAll();
-                                rebuildLayout();
+                                buildLayout();
                                 return null;
                             }
                         });
