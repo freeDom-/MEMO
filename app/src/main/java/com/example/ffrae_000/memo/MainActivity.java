@@ -3,6 +3,7 @@ package com.example.ffrae_000.memo;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -35,8 +36,6 @@ import java.util.concurrent.Callable;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    //TODO Share-Funktion
 
     private static String TEMP_FILE = Environment.getExternalStorageDirectory() + "/Media/MEMO/temp.3gpp";
     private List<Memo> memos = new LinkedList<>();
@@ -272,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds a button to start the Memo and to delete the Memo to the GUI.
+     * Adds a button to start, share and delete the Memo
      *
      * @param m
      */
@@ -287,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
         memoBtn.setId(10000 + m.getId());
         ImageButton deleteBtn = new ImageButton(this);
         deleteBtn.setId(20000 + m.getId());
+        ImageButton shareBtn = new ImageButton(this);
+        shareBtn.setId(30000 + m.getId());
 
         // Set layout for memoBtn
         memoBtn.setText(m.getName());
@@ -295,30 +296,22 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) memoBtn.getLayoutParams();
         params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        params.addRule(RelativeLayout.LEFT_OF, deleteBtn.getId());
+        params.addRule(RelativeLayout.LEFT_OF, shareBtn.getId());
         memoBtn.setLayoutParams(params);
-
         if (m instanceof TextMemo) {
             memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_email, 0, 0, 0);
-            // Set OnClickListener
-            memoBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), TextActivity.class);
-                    intent.putExtra("TextMemo", m);
-                    startActivityForResult(intent, 1337);
-                }
-            });
         } else {
             memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_media_play, 0, 0, 0);
-            // Set OnClickListener
-            memoBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // TODO: show popup for audio playback
-                }
-            });
         }
+
+        // Set layout for shareBtn
+        shareBtn.setImageResource(android.R.drawable.ic_menu_share);
+        shareBtn.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT));
+        params = (RelativeLayout.LayoutParams) shareBtn.getLayoutParams();
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        params.addRule(RelativeLayout.LEFT_OF, deleteBtn.getId());
+        shareBtn.setLayoutParams(params);
 
         // Set layout for deleteBtn
         deleteBtn.setImageResource(android.R.drawable.ic_menu_delete);
@@ -329,33 +322,91 @@ public class MainActivity extends AppCompatActivity {
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         deleteBtn.setLayoutParams(params);
 
+        // Set OnClickListener for memoBtn
+        if (m instanceof TextMemo) {
+            memoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), TextActivity.class);
+                    intent.putExtra("TextMemo", m);
+                    startActivityForResult(intent, 1337);
+                }
+            });
+        } else {
+            memoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TODO: show popup for audio playback
+                }
+            });
+        }
+
+        // Set OnClickListener for shareBtn
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                share(m);
+            }
+        });
+
         // Set OnClickListener for deleteBtn
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utilities.showAlert(MainActivity.this, "Do you really want to delete " + m.getName() + "?",
-                        "Yes", "No", null, new Callable<Void>() {
-                            @Override
-                            public Void call() throws Exception {
-                                memos.remove(m);
-                                if (m instanceof AudioMemo) {
-                                    File delTemp = new File(((AudioMemo) m).getPath());
-                                    delTemp.delete();
-                                }
-                                saveAll();
-                                buildLayout();
-                                return null;
-                            }
-                        });
+                delete(m);
             }
         });
 
         // Add buttons to RelativeLayout
         rl.addView(memoBtn);
+        rl.addView(shareBtn);
         rl.addView(deleteBtn);
 
         // Add RelativeLayout to LinearLayout
         llContent.addView(rl);
+    }
+
+    /**
+     * Shares a Memo with another App
+     *
+     * @param m
+     */
+    private void share(Memo m) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+
+        if (m instanceof TextMemo) {
+            sendIntent.putExtra(Intent.EXTRA_TEXT, ((TextMemo) m).getData());
+            sendIntent.setType("text/plain");
+        } else {
+            File file = new File(((AudioMemo) m).getPath());
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+            sendIntent.setType("audio/*");
+        }
+
+        startActivity(Intent.createChooser(sendIntent, "Share Memo..."));
+    }
+
+    /**
+     * Deletes a Memo and rebuilds the layout
+     *
+     * @param m
+     */
+    private void delete(final Memo m) {
+        Utilities.showAlert(MainActivity.this, "Do you really want to delete " + m.getName() + "?",
+                "Yes", "No", null, new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        memos.remove(m);
+                        if (m instanceof AudioMemo) {
+                            File delTemp = new File(((AudioMemo) m).getPath());
+                            delTemp.delete();
+                        }
+                        saveAll();
+                        buildLayout();
+                        return null;
+                    }
+                });
     }
 
     /**
