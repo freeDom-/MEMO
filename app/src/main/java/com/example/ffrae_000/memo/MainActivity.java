@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO Share-Funktion
 
-    private List<Memo> memos = new LinkedList<>();
     private static String TEMP_FILE = Environment.getExternalStorageDirectory() + "/Media/MEMO/temp.3gpp";
+    private List<Memo> memos = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +49,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         buildLayout();
-        // TODO: remove example data
-        if (memos.size() == 0) {
-            memos.add(new TextMemo(memos.size(), "TextTest"));
-            ((TextMemo) memos.get(0)).setData("Lorem Ipsum");
-            memos.add(new AudioMemo(memos.size(), "AudioTest"));
-            memos.add(new TextMemo(memos.size(), "Text2Test"));
-            buildLayout();
-        }
 
         final FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addMemoPopup(fabAdd);
+                createMemoPopup(fabAdd);
             }
         });
     }
@@ -103,8 +95,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addMemoPopup(View caller) {
-        // Create View for Helpers.showAlert() method
+    /**
+     * Shows a popup window for selecting the Memo to create
+     *
+     * @param caller
+     */
+    private void createMemoPopup(View caller) {
+        // Create View for Utilities.showAlert() method
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         Button createTextMemo = new Button(this);
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         // Add buttons to linearLayout and show alert
         linearLayout.addView(createTextMemo);
         linearLayout.addView(createAudioMemo);
-        final AlertDialog alert = Helpers.showAlert(MainActivity.this, "Choose the memo type:", null, "Cancel", linearLayout, null);
+        final AlertDialog alert = Utilities.showAlert(MainActivity.this, "Choose the memo type:", null, "Cancel", linearLayout, null);
 
         // Add OnClickListeners to Buttons
         createTextMemo.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 final EditText input = new EditText(getApplicationContext());
                 input.setSingleLine();
 
-                Helpers.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
+                Utilities.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
                         TextMemo m = new TextMemo(memos.size(), input.getText().toString());
@@ -151,11 +148,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void record(){
+    private void record() {
         final ImageButton recordButton = new ImageButton(getApplicationContext());
         recordButton.setImageResource(android.R.drawable.ic_btn_speak_now);                         //TODO Layout
 
-        final AlertDialog recorder = Helpers.showAlert(MainActivity.this, "Record Memo", null, "cancle", recordButton, null);
+        final AlertDialog recorder = Utilities.showAlert(MainActivity.this, "Record Memo", null, "cancle", recordButton, null);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void playRecorded(){
+    private void playRecorded() {
         AudioPlayer aP;
         try {
             aP = new AudioPlayer(TEMP_FILE);
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             AlertDialog.Builder fnf = new AlertDialog.Builder(this);
             fnf.setMessage("File not found!");
             fnf.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -207,13 +204,13 @@ public class MainActivity extends AppCompatActivity {
         recordReplayLayout.addView(playerLayout);
         recordReplayLayout.addView(redoButton);
 
-        final AlertDialog player = Helpers.showAlert(this, "Your MEMO", "save", "cancle", recordReplayLayout, new Callable<Void>() {
+        final AlertDialog player = Utilities.showAlert(this, "Your MEMO", "save", "cancle", recordReplayLayout, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 final EditText input = new EditText(getApplicationContext());
                 input.setSingleLine();
 
-                Helpers.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
+                Utilities.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
                         AudioMemo m = new AudioMemo(memos.size(), input.getText().toString());
@@ -222,10 +219,10 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             FileInputStream fis = new FileInputStream(TEMP_FILE);
                             File zwischenSpeicher = new File(m.getPath());
-                            if (zwischenSpeicher.exists()){
+                            if (zwischenSpeicher.exists()) {
                                 zwischenSpeicher.delete();
                             }
-                            
+
                             FileOutputStream fos = new FileOutputStream(zwischenSpeicher);
                             fos.write(fis.read());
 
@@ -251,9 +248,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Build the layout by removing all existing layout components and rebuilding them
+     */
     private void buildLayout() {
-        // Clear old data
-        memos.clear();
+        // Clear layout
         ((ViewGroup) findViewById(R.id.linearLayoutContent)).removeAllViews();
         // Load data
         loadAll();
@@ -272,6 +271,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Adds a button to start the Memo and to delete the Memo to the GUI.
+     *
+     * @param m
+     */
     private void addButtons(final Memo m) {
         LinearLayout llContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
         final RelativeLayout rl = new RelativeLayout(this);
@@ -329,12 +333,12 @@ public class MainActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Helpers.showAlert(MainActivity.this, "Do you really want to delete " + m.getName() + "?",
+                Utilities.showAlert(MainActivity.this, "Do you really want to delete " + m.getName() + "?",
                         "Yes", "No", null, new Callable<Void>() {
                             @Override
                             public Void call() throws Exception {
                                 memos.remove(m);
-                                if (m instanceof AudioMemo){
+                                if (m instanceof AudioMemo) {
                                     File delTemp = new File(((AudioMemo) m).getPath());
                                     delTemp.delete();
                                 }
@@ -354,6 +358,9 @@ public class MainActivity extends AppCompatActivity {
         llContent.addView(rl);
     }
 
+    /**
+     * Saves all Memos from the memos List into a xml-file
+     */
     private void saveAll() {
         File file = new File(getFilesDir().getPath() + "/memo_data.xml");
         XStream xstream = new XStream();
@@ -373,7 +380,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads all memos from a xml-file into the memos List.
+     */
     private void loadAll() {
+        // Clear old data
+        memos.clear();
         XStream xstream = new XStream();
         File file = new File(getFilesDir().getPath() + "/memo_data.xml");
         if (file.exists()) {

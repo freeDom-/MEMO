@@ -1,11 +1,8 @@
 package com.example.ffrae_000.memo;
 
 import android.content.Context;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -52,7 +49,7 @@ public class AudioPlayer {
 
     //TODO: MAKE LAYOUT LOOK GREAT AGAIN!!!!!
 
-    public LinearLayout setPlayerLayout(Context context, String length, String currTime){
+    public LinearLayout setPlayerLayout(Context context, String length, String currTime) {
         String currentTime = currTime;
         String finalTime = length;
 
@@ -71,7 +68,6 @@ public class AudioPlayer {
         playerLayout.addView(time);
         playerLayout.addView(seekBar);
         playerLayout.addView(play_pause);
-        playerLayout.addView(stop);
 
         final View.OnClickListener play = new View.OnClickListener() {
 
@@ -81,12 +77,12 @@ public class AudioPlayer {
             public void onClick(View view) {
                 if (mP != null) {
                     if (mP.isPlaying()) {
-                            pausePlaying();
-                            play_pause.setImageResource(android.R.drawable.ic_media_play);
+                        pausePlaying();
+                        play_pause.setImageResource(android.R.drawable.ic_media_play);
 
                     } else {
-                            startPlaying();
-                            play_pause.setImageResource(android.R.drawable.ic_media_pause);
+                        startPlaying();
+                        play_pause.setImageResource(android.R.drawable.ic_media_pause);
                     }
                 }
             }

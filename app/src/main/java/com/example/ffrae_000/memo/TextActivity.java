@@ -50,7 +50,7 @@ public class TextActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             // Show popup question if text was edited
             if (memo.getData().compareTo(etData.getText().toString()) != 0) {
-                Helpers.showAlert(TextActivity.this, "Are you sure? All changes won't be saved!",
+                Utilities.showAlert(TextActivity.this, "Are you sure? All changes won't be saved!",
                         "Yes", "Cancel", null, new Callable<Void>() {
                             @Override
                             public Void call() throws Exception {

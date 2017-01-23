@@ -5,8 +5,6 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static android.content.ContentValues.TAG;
@@ -23,11 +21,11 @@ public class AudioRecorder {
 
     public void setRecorder() {
 
-        OUTPUT_FILE = Environment.getExternalStorageDirectory()+"/Media/MEMO/temp.3gpp";
+        OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/Media/MEMO/temp.3gpp";
 
         File outFile = new File(OUTPUT_FILE);
 
-        if(outFile.exists()){
+        if (outFile.exists()) {
             outFile.delete();
         }
 
@@ -41,14 +39,14 @@ public class AudioRecorder {
             mR.prepare();
         } catch (IOException e) {
             Log.e(TAG, "prepare() failed: " + e);
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             Log.e(TAG, "prepare() failed: " + e);
         }
         mR.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
             public void onInfo(MediaRecorder mediaRecorder, int what, int extra) {
                 Log.i(TAG, "Info what: " + what + " extra: " + extra);
-                switch (what){
+                switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_INFO_UNKNOWN:
                         Log.i(TAG, "Info: MEDIA_RECORDER_INFO_UNKNOWN");
                         break;
@@ -64,7 +62,7 @@ public class AudioRecorder {
         mR.setOnErrorListener(new MediaRecorder.OnErrorListener() {
             @Override
             public void onError(MediaRecorder mediaRecorder, int what, int extra) {
-                switch (what){
+                switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN:
                         Log.e(TAG, "Info: MEDIA_RECORDER_ERROR_UNKNOWN");
                         break;
@@ -81,7 +79,7 @@ public class AudioRecorder {
         try {
             mR.start();
             isStarted = true;
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             Log.e(TAG, "start() failed: " + e);
         }
     }
@@ -92,9 +90,9 @@ public class AudioRecorder {
             mR.release();
             mR = null;
             isStarted = false;
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             Log.i(TAG, "stop() failed: " + e);
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             Log.i(TAG, "stop() failed: " + e);
         }
     }
@@ -105,7 +103,7 @@ public class AudioRecorder {
         setRecorder();
     }
 
-    public boolean isRecording(){
+    public boolean isRecording() {
         return isStarted;
     }
 
