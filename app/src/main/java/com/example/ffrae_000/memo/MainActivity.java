@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO Share-Funktion
 
-    private static String TEMP_FILE = Environment.getExternalStorageDirectory() + "/Media/MEMO/temp.3gpp";
+    private static String TEMP_FILE = Environment.getExternalStorageDirectory() + "/MEMO/temp.3gpp";
     private List<Memo> memos = new LinkedList<>();
 
     @Override
@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
+
+        File appFolder = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO");
+        if (!appFolder.exists()) {
+            appFolder.mkdir();
+        }
 
         buildLayout();
 
