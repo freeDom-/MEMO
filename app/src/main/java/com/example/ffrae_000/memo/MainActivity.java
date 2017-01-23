@@ -1,8 +1,10 @@
 package com.example.ffrae_000.memo;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +22,7 @@ import com.thoughtworks.xstream.XStream;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,7 +36,10 @@ import java.util.concurrent.Callable;
 
 public class MainActivity extends AppCompatActivity {
 
+    //TODO Share-Funktion
+
     private List<Memo> memos = new LinkedList<>();
+    private static String TEMP_FILE = Environment.getExternalStorageDirectory() + "/Media/MEMO/temp.3gpp";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("TextMemo", m);
                         startActivityForResult(intent, 1337);
                         // Close opened alert
-                        alert.dismiss();
+                        alert.dismiss();            //TODO alert.dismiss() würde ich schon direkt bei der auswahl aufrufen siehe createAudioMemo
                         return null;
                     }
                 });
@@ -139,6 +145,108 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: Create AudioMemo
+                alert.dismiss();
+                record();
+            }
+        });
+    }
+
+    private void record(){
+        final ImageButton recordButton = new ImageButton(getApplicationContext());
+        recordButton.setImageResource(android.R.drawable.ic_btn_speak_now);                         //TODO Layout
+
+        final AlertDialog recorder = Helpers.showAlert(MainActivity.this, "Record Memo", null, "cancle", recordButton, null);
+
+        recordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AudioRecorder aR = new AudioRecorder();
+                recordButton.setImageResource(android.R.drawable.ic_notification_overlay);
+                aR.setRecorder();
+                aR.startRecord();                                                                   //TODO fix recordproblem
+                recordButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        aR.stopRecord();
+                        recorder.dismiss();
+                        playRecorded();
+                    }
+                });
+            }
+        });
+    }
+
+    private void playRecorded(){
+        AudioPlayer aP;
+        try {
+            aP = new AudioPlayer(TEMP_FILE);
+        } catch (FileNotFoundException e){
+            AlertDialog.Builder fnf = new AlertDialog.Builder(this);
+            fnf.setMessage("File not found!");
+            fnf.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            fnf.create();
+            fnf.show();
+            return;
+        }
+        String length = "5:00";                             //TODO insert length of the audiofile
+
+        LinearLayout playerLayout = aP.setPlayerLayout(this, length, "00:00");
+
+        LinearLayout recordReplayLayout = new LinearLayout(this);
+        recordReplayLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+        Button redoButton = new Button(this);
+        redoButton.setText("REDO");
+
+        recordReplayLayout.addView(playerLayout);
+        recordReplayLayout.addView(redoButton);
+
+        final AlertDialog player = Helpers.showAlert(this, "Your MEMO", "save", "cancle", recordReplayLayout, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                final EditText input = new EditText(getApplicationContext());
+                input.setSingleLine();
+
+                Helpers.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        AudioMemo m = new AudioMemo(memos.size(), input.getText().toString());
+                        memos.add(memos.size(), m);
+
+                        try {
+                            FileInputStream fis = new FileInputStream(TEMP_FILE);
+                            File zwischenSpeicher = new File(m.getPath());
+                            if (zwischenSpeicher.exists()){
+                                zwischenSpeicher.delete();
+                            }
+                            
+                            FileOutputStream fos = new FileOutputStream(zwischenSpeicher);
+                            fos.write(fis.read());
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        saveAll();
+                        buildLayout();
+                        return null;
+                    }
+                });
+                return null;
+            }
+        });
+
+        redoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                player.dismiss();
+                record();
             }
         });
     }
@@ -226,6 +334,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public Void call() throws Exception {
                                 memos.remove(m);
+                                if (m instanceof AudioMemo){
+                                    File delTemp = new File(((AudioMemo) m).getPath());
+                                    delTemp.delete();
+                                }
                                 saveAll();
                                 buildLayout();
                                 return null;

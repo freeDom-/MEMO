@@ -1,13 +1,15 @@
 package com.example.ffrae_000.memo;
 
 
+import android.os.Environment;
+
 class AudioMemo extends Memo {
-    private String dir = "/SD-Karte/Media/audio/MEMO-audio/";
+    private String dir = Environment.getExternalStorageDirectory() + "/Media/audio/MEMO/";
     private String path;
 
     AudioMemo(int id, String name) {
         super(id, name);
-        path = dir + name + id + ".3GPP";
+        path = dir + name + id + ".3gpp";
     }
 
     public String getPath() {
