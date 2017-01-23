@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
+        File appFolder = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO");
+        if (!appFolder.exists()) {
+            appFolder.mkdir();
+        }
+
         buildLayout();
 
         final FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);

@@ -21,7 +21,7 @@ public class AudioRecorder {
 
     public void setRecorder() {
 
-        OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/Media/MEMO/temp.3gpp";
+        OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/MEMO/temp.3gpp";
 
         File outFile = new File(OUTPUT_FILE);
 

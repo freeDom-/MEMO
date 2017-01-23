@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class AudioPlayer {
+    boolean isPaused = false;
     private MediaPlayer mP;
 
     public AudioPlayer(String path) throws FileNotFoundException {
