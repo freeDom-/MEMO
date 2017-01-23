@@ -68,10 +68,6 @@ public class AudioPlayer {
         final ImageButton play_pause = new ImageButton(context);
         play_pause.setImageResource(android.R.drawable.ic_media_play);
 
-        ImageButton stop = new ImageButton(context);                    //TODO: vllt überflüssig
-        stop.setImageResource(android.R.drawable.ic_media_previous);
-
-
         playerLayout.addView(time);
         playerLayout.addView(seekBar);
         playerLayout.addView(play_pause);
@@ -83,28 +79,20 @@ public class AudioPlayer {
 
             @Override
             public void onClick(View view) {
-                if (mP.isPlaying()){
-                    if (mP != null) {
-                        pausePlaying();
-                        play_pause.setImageResource(android.R.drawable.ic_media_play);
-                    }
-                } else {
-                    if(mP != null) {
-                        startPlaying();
-                        play_pause.setImageResource(android.R.drawable.ic_media_pause);
+                if (mP != null) {
+                    if (mP.isPlaying()) {
+                            pausePlaying();
+                            play_pause.setImageResource(android.R.drawable.ic_media_play);
+
+                    } else {
+                            startPlaying();
+                            play_pause.setImageResource(android.R.drawable.ic_media_pause);
                     }
                 }
             }
         };
 
         play_pause.setOnClickListener(play);
-
-        stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                stopPlaying();
-            }
-        });
 
         return playerLayout;
     }

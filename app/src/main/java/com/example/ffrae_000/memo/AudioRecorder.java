@@ -109,14 +109,4 @@ public class AudioRecorder {
         return isStarted;
     }
 
-    public void save(String path) {         //TODO methode löschen da in MainActivity verlagert
-        try {
-            FileInputStream fis = new FileInputStream(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Media/MEMO/temp.3CPP");
-            FileOutputStream fos = new FileOutputStream(path);
-            fos.write(fis.read());
-            //TODO: try to delete the temp file
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
