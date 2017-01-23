@@ -223,9 +223,8 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             FileInputStream fis = new FileInputStream(TEMP_FILE);
                             File zwischenSpeicher = new File(m.getPath());
-                            if (zwischenSpeicher.exists()) {
-                                zwischenSpeicher.delete();
-                            }
+
+                            Utilities.delete(zwischenSpeicher);
 
                             FileOutputStream fos = new FileOutputStream(zwischenSpeicher);
                             fos.write(fis.read());
@@ -405,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                         memos.remove(m);
                         if (m instanceof AudioMemo) {
                             File delTemp = new File(((AudioMemo) m).getPath());
-                            delTemp.delete();
+                            Utilities.delete(delTemp);
                         }
                         saveAll();
                         buildLayout();

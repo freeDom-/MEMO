@@ -25,9 +25,7 @@ public class AudioRecorder {
 
         File outFile = new File(OUTPUT_FILE);
 
-        if (outFile.exists()) {
-            outFile.delete();
-        }
+        Utilities.delete(outFile);
 
         mR = new MediaRecorder();
         mR.setAudioSource(MediaRecorder.AudioSource.MIC);

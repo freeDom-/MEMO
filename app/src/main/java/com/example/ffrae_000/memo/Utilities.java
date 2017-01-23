@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 abstract class Utilities {
@@ -55,6 +56,16 @@ abstract class Utilities {
         AlertDialog alert = builder.create();
         alert.show();
         return alert;
+    }
+
+    /**
+     * Function to delete Files
+     */
+
+    static void delete(File delfile) {
+        if (delfile.exists()) {
+            delfile.delete();
+        }
     }
 
     /**
@@ -115,7 +126,7 @@ abstract class Utilities {
      */
     public int progressToTimer(int progress, int totalDuration) {
         int currentDuration = 0;
-        totalDuration = (int) (totalDuration / 1000);
+        totalDuration = totalDuration / 1000;
         currentDuration = (int) ((((double) progress) / 100) * totalDuration);
 
         // return current duration in milliseconds
