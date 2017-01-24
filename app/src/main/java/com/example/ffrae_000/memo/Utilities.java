@@ -3,6 +3,7 @@ package com.example.ffrae_000.memo;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
@@ -98,6 +99,18 @@ abstract class Utilities {
                 Log.i(TAG, "Could not create " + dir.getPath());
             }
         }
+    }
+
+    /**
+     * Function to Check if there is an External Storage available
+     *
+     * @return a Boolean which is true if there is External Storage available
+     */
+
+    static boolean externalStoragecheck() {
+        //TODO: maybe check if there's enough
+        //File test = new File(Environment.getExternalStorageDirectory() + File.separator + "Media");
+        return !Environment.isExternalStorageEmulated();
     }
 
     /**

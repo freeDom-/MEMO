@@ -3,6 +3,7 @@ package com.example.ffrae_000.memo;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,6 +42,7 @@ import static android.content.ContentValues.TAG;
 public class MainActivity extends AppCompatActivity {
 
     private List<Memo> memos = new LinkedList<>();
+    private List<AudioMemo> notFoundAudioMemo = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +53,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
-        File appFolder = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO");
-        Utilities.createDirectory(appFolder);
-
+        if (Utilities.externalStoragecheck()) {
+            File appFolder = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO");
+            if (!appFolder.exists()) {
+                Utilities.createDirectory(appFolder);
+            }
+            //File test = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO" + File.separator + "test");
+        }
         buildLayout();
 
         final FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
@@ -309,6 +315,9 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = xstream.createObjectOutputStream(fos);
 
+            memos.addAll(notFoundAudioMemo);
+            notFoundAudioMemo.clear();
+
             for (Memo m : memos) {
                 oos.writeObject(m);
             }
@@ -336,6 +345,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     while (true) {
                         memoTemp = (Memo) ois.readObject();
+                        if (memoTemp instanceof AudioMemo && !((AudioMemo) memoTemp).getData().exists()) {
+                            notFoundAudioMemo.add((AudioMemo) memoTemp);
+                            continue;
+                        }
                         memos.add(memoTemp);
                     }
                 } catch (ClassNotFoundException e) {
@@ -357,6 +370,7 @@ public class MainActivity extends AppCompatActivity {
     private void createTextMemo() {
         final EditText input = new EditText(getApplicationContext());
         input.setSingleLine();
+        input.setTextColor(Color.BLACK);
 
         Utilities.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
             @Override
@@ -405,6 +419,7 @@ public class MainActivity extends AppCompatActivity {
                         recorder.dismiss();
                         final EditText input = new EditText(getApplicationContext());
                         input.setSingleLine();
+                        input.setTextColor(Color.BLACK);
 
                         AlertDialog alert = Utilities.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
                             @Override
@@ -412,11 +427,13 @@ public class MainActivity extends AppCompatActivity {
                                 // Add new Memo
                                 AudioMemo m = new AudioMemo(memos.size(), input.getText().toString());
                                 memos.add(memos.size(), m);
-                                saveAll();
-                                buildLayout();
+
                                 // Rename File
-                                File temp = new File(AudioRecorder.OUTPUT_FILE);
+                                File temp = aR.getOutFile();
                                 Utilities.moveFile(temp, m.getData());
+
+                                saveAll();                          //TODO hab das ma 4 Zeilen nach unten verschoben weil das sonst mit der neuen wenn ne audio file nicht gefunden wir funktion in konflikt kommt
+                                buildLayout();
                                 // Start PlayDialog
                                 playMemo(m);
                                 return null;

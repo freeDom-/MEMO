@@ -9,10 +9,18 @@ class AudioMemo extends Memo {
 
     AudioMemo(int id, String name) {
         super(id, name);
-        data = new File(Environment.getExternalStorageDirectory() + "/MEMO/" + name + id + ".3gpp");
+        if (Utilities.externalStoragecheck()) {
+            data = new File(Environment.getExternalStorageDirectory() + "/MEMO/" + name + id + ".3gpp");
+        } else {
+            data = new File(Environment.getDataDirectory().getPath() + "/MEMO/" + name + id + ".3gpp");
+        }
     }
 
     public File getData() {
         return data;
+    }
+
+    public void setData(File path) {
+        data = path;
     }
 }

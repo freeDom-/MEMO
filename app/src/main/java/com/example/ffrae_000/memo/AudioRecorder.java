@@ -13,6 +13,7 @@ class AudioRecorder {
     static final String OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/MEMO/temp.3gpp";
     private MediaRecorder mR = null;
     private boolean isStarted = false;
+    private File outFile = null;
 
     AudioRecorder() {
         setRecorder();
@@ -22,8 +23,14 @@ class AudioRecorder {
      * Prepares the AudioRecorder
      */
     public void setRecorder() {
-        // TODO: check if external storage exists and has enough space, otherwise store on internal storage (in Memos app directory)
-        File outFile = new File(OUTPUT_FILE);
+
+        if (Utilities.externalStoragecheck()) {
+            outFile = new File(OUTPUT_FILE);
+        } else {
+            outFile = new File(Environment.getDataDirectory().getPath() + "/temp.3gpp");
+        }
+
+
 
         Utilities.delete(outFile);
         mR = new MediaRecorder();
@@ -109,4 +116,7 @@ class AudioRecorder {
         return isStarted;
     }
 
+    public File getOutFile() {
+        return outFile;
+    }
 }
