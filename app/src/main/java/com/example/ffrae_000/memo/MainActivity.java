@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         params.addRule(RelativeLayout.LEFT_OF, shareBtn.getId());
         memoBtn.setLayoutParams(params);
         if (m instanceof TextMemo) {
+            // TODO: replace icon by something better fitting
             memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_email, 0, 0, 0);
         } else {
             memoBtn.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_media_play, 0, 0, 0);
