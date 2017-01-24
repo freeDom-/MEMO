@@ -379,15 +379,21 @@ public class MainActivity extends AppCompatActivity {
      * Shows an Alert for recording an audio file and creates an AudioMemo
      */
     private void createAudioMemo() {
+        final AudioRecorder aR = new AudioRecorder();
         final ImageButton recordButton = new ImageButton(getApplicationContext());
-        // TODO: change recording layout?
+        // TODO: change recording layout? At least buttons should have the same size no matter which icon showing
         recordButton.setImageResource(android.R.drawable.ic_btn_speak_now);
         final AlertDialog recorder = Utilities.showAlert(MainActivity.this, "Record Memo", null, "Cancel", recordButton, null);
+        recorder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                cleanUp(aR);
+            }
+        });
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AudioRecorder aR = new AudioRecorder();
                 recordButton.setImageResource(android.R.drawable.ic_notification_overlay);
                 aR.setRecorder();
                 aR.startRecord();
@@ -409,6 +415,7 @@ public class MainActivity extends AppCompatActivity {
                                 buildLayout();
                                 // Rename File
                                 File temp = new File(AudioRecorder.OUTPUT_FILE);
+                                Utilities.moveFile(temp, m.getData());
                                 // Start PlayDialog
                                 playMemo(m);
                                 return null;
@@ -417,15 +424,23 @@ public class MainActivity extends AppCompatActivity {
                         alert.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
                             public void onCancel(DialogInterface dialogInterface) {
-                                // Clean up and delete temp file if recording is cancelled
-                                File temp = new File(AudioRecorder.OUTPUT_FILE);
-                                Utilities.delete(temp);
+                                cleanUp(aR);
                             }
                         });
                     }
                 });
             }
         });
+    }
+
+    /**
+     * Removes the temporary audio file after recording was cancelled
+     */
+    private void cleanUp(AudioRecorder aR) {
+        // TODO BUG: not deleting the temp file correctly yet.. Debug?!
+        aR.stopRecord();
+        File temp = new File(AudioRecorder.OUTPUT_FILE);
+        Utilities.delete(temp);
     }
 
     /**

@@ -62,6 +62,20 @@ abstract class Utilities {
     }
 
     /**
+     * Function to move or rename a File
+     *
+     * @param oldName File with the old path
+     * @param newName File with the new path
+     */
+    static void moveFile(File oldName, File newName) {
+        if (oldName.exists()) {
+            if (!oldName.renameTo(newName)) {
+                Log.i(TAG, "Could not rename " + oldName.getPath() + " into " + newName.getPath());
+            }
+        }
+    }
+
+    /**
      * Function to delete a File
      * @param delfile File to delete
      */
