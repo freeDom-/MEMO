@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         Utilities.createDirectory(appFolder);
 
         buildLayout();
+        // TODO: if no memos exist display label: "You can add memos by touching the + icon in the bottom-left corner"
 
         final FloatingActionButton fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -180,7 +181,9 @@ public class MainActivity extends AppCompatActivity {
         shareBtn.setId(30000 + m.getId());
 
         // Set layout for memoBtn
+        // TODO: display "as much from name as fits..." if name is not fitting inside one line
         memoBtn.setText(m.getName());
+        memoBtn.setSingleLine();
         memoBtn.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT));
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) memoBtn.getLayoutParams();
@@ -267,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
         sendIntent.setAction(Intent.ACTION_SEND);
 
         if (m instanceof TextMemo) {
-            sendIntent.putExtra(Intent.EXTRA_TEXT, ((TextMemo) m).getData());
+            sendIntent.putExtra(Intent.EXTRA_TEXT, m.getName() + ":\n" + ((TextMemo) m).getData());
             sendIntent.setType("text/plain");
         } else {
             sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(((AudioMemo) m).getData()));

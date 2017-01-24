@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toolbar;
 
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -14,6 +15,7 @@ import java.util.concurrent.Callable;
 public class TextActivity extends AppCompatActivity {
 
     private TextMemo memo;
+    private Toolbar toolbar;
     private EditText etData;
 
     @Override
@@ -23,6 +25,10 @@ public class TextActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         memo = (TextMemo) intent.getSerializableExtra("TextMemo");
+
+        // TODO: set toolbars title to Memos name (only available in API 21?)
+        // toolbar = (Toolbar) findViewById(R.id.toolbarText);
+        // toolbar.setTitle(memo.getName());
 
         // Load text from Memo
         etData = (EditText) findViewById(R.id.editTextData);
