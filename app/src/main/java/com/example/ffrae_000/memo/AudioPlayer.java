@@ -100,7 +100,7 @@ class AudioPlayer {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO: app crashes if start wasnt pressed before seeking or audio finished (stopped) before seeking
+                // TODO BUG: app crashes if start wasnt pressed before seeking or audio finished (stopped) before seeking
                 mP.seekTo(seekBar.getProgress());
                 // Start playing if it was playing before seeking
                 if (isPlaying) {
