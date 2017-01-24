@@ -61,6 +61,14 @@ abstract class Utilities {
         return alert;
     }
 
+    static void moveFile(File oldName, File newName) {
+        if (oldName.exists()) {
+            if (!oldName.renameTo(newName)) {
+                Log.i(TAG, "Could not rename " + oldName.getPath() + " into " + newName.getPath());
+            }
+        }
+    }
+
     /**
      * Function to move or rename a File
      *
