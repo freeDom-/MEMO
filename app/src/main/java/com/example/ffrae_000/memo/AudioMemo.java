@@ -1,22 +1,18 @@
 package com.example.ffrae_000.memo;
 
-
 import android.os.Environment;
 
+import java.io.File;
+
 class AudioMemo extends Memo {
-    private String dir = Environment.getExternalStorageDirectory() + "/MEMO/";
-    private String path;
+    private File data;
 
     AudioMemo(int id, String name) {
         super(id, name);
-        path = dir + name + id + ".3gpp";
+        data = new File(Environment.getExternalStorageDirectory() + "/MEMO/" + name + id + ".3gpp");
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setDir(String dir) {
-        this.dir = dir;
+    public File getData() {
+        return data;
     }
 }

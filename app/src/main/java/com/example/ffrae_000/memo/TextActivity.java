@@ -32,7 +32,6 @@ public class TextActivity extends AppCompatActivity {
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("clicked");
                 // Save data into the object and return code 1337 for saving the changes to a file
                 memo.setData(etData.getText().toString());
                 memo.setDate(new Date());

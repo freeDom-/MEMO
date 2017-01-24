@@ -9,24 +9,23 @@ import java.io.IOException;
 
 import static android.content.ContentValues.TAG;
 
-public class AudioRecorder {
+class AudioRecorder {
+    static final String OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/MEMO/temp.3gpp";
     private MediaRecorder mR = null;
     private boolean isStarted = false;
-    private String OUTPUT_FILE;
 
-
-    public AudioRecorder() {
+    AudioRecorder() {
         setRecorder();
     }
 
+    /**
+     * Prepares the AudioRecorder
+     */
     public void setRecorder() {
-
-        OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/MEMO/temp.3gpp";
-
+        // TODO: check if external storage exists and has enough space, otherwise store on internal storage (in Memos app directory)
         File outFile = new File(OUTPUT_FILE);
 
         Utilities.delete(outFile);
-
         mR = new MediaRecorder();
         mR.setAudioSource(MediaRecorder.AudioSource.MIC);
         mR.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -35,9 +34,7 @@ public class AudioRecorder {
 
         try {
             mR.prepare();
-        } catch (IOException e) {
-            Log.e(TAG, "prepare() failed: " + e);
-        } catch (IllegalStateException e) {
+        } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "prepare() failed: " + e);
         }
         mR.setOnInfoListener(new MediaRecorder.OnInfoListener() {
@@ -73,6 +70,9 @@ public class AudioRecorder {
 
     }
 
+    /**
+     * Starts the record
+     */
     public void startRecord() {
         try {
             mR.start();
@@ -82,19 +82,23 @@ public class AudioRecorder {
         }
     }
 
+    /**
+     * Stops the record
+     */
     public void stopRecord() {
         try {
             mR.stop();
             mR.release();
             mR = null;
             isStarted = false;
-        } catch (NullPointerException e) {
-            Log.i(TAG, "stop() failed: " + e);
-        } catch (IllegalStateException e) {
+        } catch (NullPointerException | IllegalStateException e) {
             Log.i(TAG, "stop() failed: " + e);
         }
     }
 
+    /**
+     * Resets the MediaRecorder by releasing it frees memory
+     */
     public void resetRecorder() {
         mR.release();
         mR = null;
