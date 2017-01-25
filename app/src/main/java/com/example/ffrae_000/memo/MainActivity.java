@@ -323,6 +323,13 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = xstream.createObjectOutputStream(fos);
 
+            if (Utilities.externalStoragecheck()) {
+                for (AudioMemo nfm : notFoundAudioMemo) {
+                    if (!nfm.getData().exists()) {
+                        notFoundAudioMemo.remove(nfm);
+                    }
+                }
+            }
             memos.addAll(notFoundAudioMemo);
             notFoundAudioMemo.clear();
 
@@ -404,8 +411,8 @@ public class MainActivity extends AppCompatActivity {
     private void createAudioMemo() {
         final AudioRecorder aR = new AudioRecorder();
         final ImageButton recordButton = new ImageButton(getApplicationContext());
-        // TODO: change recording layout? At least buttons should have the same size no matter which icon showing
-        recordButton.setImageResource(android.R.drawable.ic_btn_speak_now);
+        recordButton.setImageResource(android.R.drawable.btn_star_big_off);
+
         final AlertDialog recorder = Utilities.showAlert(MainActivity.this, "Record Memo", null, "Cancel", recordButton, null);
         recorder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -417,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recordButton.setImageResource(android.R.drawable.ic_notification_overlay);
+                recordButton.setImageResource(android.R.drawable.btn_star_big_on);
                 aR.setOUTPUT_FILE_DIR(appFolder.getPath());
                 aR.setRecorder();
                 aR.startRecord();
@@ -442,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
                                 File temp = aR.getOutFile();
                                 Utilities.moveFile(temp, m.getData());
 
-                                saveAll();                          //TODO hab das ma 4 Zeilen nach unten verschoben weil das sonst mit der neuen wenn ne audio file nicht gefunden wir funktion in konflikt kommt
+                                saveAll();
                                 buildLayout();
                                 // Start PlayDialog
                                 playMemo(m);
@@ -465,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
      * Removes the temporary audio file after recording was cancelled
      */
     private void cleanUp(AudioRecorder aR) {
-        // TODO BUG: not deleting the temp file correctly yet.. Debug?!
+        // TODO BUG: not deleting the temp file correctly yet.. Debug?! (also bei mir schon Frido)
         aR.stopRecord();
         File temp = new File(appFolder.getPath());
         Utilities.delete(temp);

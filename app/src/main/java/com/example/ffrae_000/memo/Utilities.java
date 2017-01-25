@@ -119,8 +119,7 @@ abstract class Utilities {
      */
 
     static boolean externalStoragecheck() {
-        //TODO: maybe check if there's enough
-        //File test = new File(Environment.getExternalStorageDirectory() + File.separator + "Media");
+        //TODO: maybe check if there's enough space
         return !Environment.isExternalStorageEmulated();
     }
 

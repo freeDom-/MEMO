@@ -27,7 +27,7 @@ class AudioPlayer {
     AudioPlayer(String path) throws FileNotFoundException {
         mP = new MediaPlayer();
         try {
-            mP.setDataSource(path);  //TODO BUGFIX: if no sd-card availeble ap crashes because it can't setDataSource()
+            mP.setDataSource(path);
             mP.prepare();
         } catch (IOException e) {
             e.printStackTrace();
@@ -132,7 +132,6 @@ class AudioPlayer {
                 }
             }
         });
-
         return playerLayout;
     }
 
