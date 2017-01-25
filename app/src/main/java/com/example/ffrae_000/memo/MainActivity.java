@@ -41,8 +41,11 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
+    File appFolder;
     private List<Memo> memos = new LinkedList<>();
     private List<AudioMemo> notFoundAudioMemo = new LinkedList<>();
+    private String OUTPUT_DIR = Environment.getExternalStorageDirectory() + File.separator + "MEMO";
+    private String OUTPUT_DIR_NO_SD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +56,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
+        Utilities.verifyStoragePermissions(this);
+
+        OUTPUT_DIR_NO_SD = getFilesDir() + File.separator + "MEMO";
+
         if (Utilities.externalStoragecheck()) {
-            File appFolder = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO");
-            if (!appFolder.exists()) {
-                Utilities.createDirectory(appFolder);
-            }
-            //File test = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO" + File.separator + "test");
+            appFolder = new File(OUTPUT_DIR);
+        } else {
+            appFolder = new File(OUTPUT_DIR_NO_SD);
+        }
+        if (!appFolder.exists()) {
+            Utilities.createDirectory(appFolder);
         }
         buildLayout();
 
@@ -410,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 recordButton.setImageResource(android.R.drawable.ic_notification_overlay);
+                aR.setOUTPUT_FILE_DIR(appFolder.getPath());
                 aR.setRecorder();
                 aR.startRecord();
                 recordButton.setOnClickListener(new View.OnClickListener() {
@@ -426,6 +435,7 @@ public class MainActivity extends AppCompatActivity {
                             public Void call() throws Exception {
                                 // Add new Memo
                                 AudioMemo m = new AudioMemo(memos.size(), input.getText().toString());
+                                m.setFileDir(appFolder.getPath());
                                 memos.add(memos.size(), m);
 
                                 // Rename File
@@ -457,7 +467,7 @@ public class MainActivity extends AppCompatActivity {
     private void cleanUp(AudioRecorder aR) {
         // TODO BUG: not deleting the temp file correctly yet.. Debug?!
         aR.stopRecord();
-        File temp = new File(AudioRecorder.OUTPUT_FILE);
+        File temp = new File(appFolder.getPath());
         Utilities.delete(temp);
     }
 
