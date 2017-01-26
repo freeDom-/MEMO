@@ -1,7 +1,6 @@
 package com.example.ffrae_000.memo;
 
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -10,27 +9,31 @@ import java.io.IOException;
 import static android.content.ContentValues.TAG;
 
 class AudioRecorder {
-    static final String OUTPUT_FILE = Environment.getExternalStorageDirectory() + "/MEMO/temp.3gpp";
+    private String OUTPUT_FILE_DIR;
     private MediaRecorder mR = null;
     private boolean isStarted = false;
+    private File outFile = null;
 
     AudioRecorder() {
-        setRecorder();
     }
 
     /**
      * Prepares the AudioRecorder
      */
     public void setRecorder() {
-        // TODO: check if external storage exists and has enough space, otherwise store on internal storage (in Memos app directory)
-        File outFile = new File(OUTPUT_FILE);
 
-        Utilities.delete(outFile);
+        outFile = new File(OUTPUT_FILE_DIR + File.separator + "temp.3gpp");
+
+        if (outFile.exists()) {
+            Utilities.delete(outFile);
+        }
+
         mR = new MediaRecorder();
         mR.setAudioSource(MediaRecorder.AudioSource.MIC);
         mR.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mR.setOutputFile(outFile.getPath());
         mR.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mR.setOutputFile(OUTPUT_FILE);
+
 
         try {
             mR.prepare();
@@ -109,4 +112,11 @@ class AudioRecorder {
         return isStarted;
     }
 
+    public File getOutFile() {
+        return outFile;
+    }
+
+    public void setOUTPUT_FILE_DIR(String dir) {
+        this.OUTPUT_FILE_DIR = dir;
+    }
 }

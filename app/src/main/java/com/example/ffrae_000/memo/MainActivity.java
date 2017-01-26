@@ -3,6 +3,7 @@ package com.example.ffrae_000.memo;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,7 +41,11 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
+    File appFolder;
     private List<Memo> memos = new LinkedList<>();
+    private List<AudioMemo> notFoundAudioMemo = new LinkedList<>();
+    private String OUTPUT_DIR = Environment.getExternalStorageDirectory() + File.separator + "MEMO";
+    private String OUTPUT_DIR_NO_SD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +56,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
-        File appFolder = new File(Environment.getExternalStorageDirectory() + File.separator + "MEMO");
-        Utilities.createDirectory(appFolder);
+        Utilities.verifyStoragePermissions(this);
 
+        OUTPUT_DIR_NO_SD = getFilesDir() + File.separator + "MEMO";
+
+        if (Utilities.externalStoragecheck()) {
+            appFolder = new File(OUTPUT_DIR);
+        } else {
+            appFolder = new File(OUTPUT_DIR_NO_SD);
+        }
+        if (!appFolder.exists()) {
+            Utilities.createDirectory(appFolder);
+        }
         buildLayout();
         // TODO: if no memos exist display label: "You can add memos by touching the + icon in the bottom-left corner"
 
@@ -312,6 +326,16 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = xstream.createObjectOutputStream(fos);
 
+            if (Utilities.externalStoragecheck()) {
+                for (AudioMemo nfm : notFoundAudioMemo) {
+                    if (!nfm.getData().exists()) {
+                        notFoundAudioMemo.remove(nfm);
+                    }
+                }
+            }
+            memos.addAll(notFoundAudioMemo);
+            notFoundAudioMemo.clear();
+
             for (Memo m : memos) {
                 oos.writeObject(m);
             }
@@ -339,6 +363,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     while (true) {
                         memoTemp = (Memo) ois.readObject();
+                        if (memoTemp instanceof AudioMemo && !((AudioMemo) memoTemp).getData().exists()) {
+                            notFoundAudioMemo.add((AudioMemo) memoTemp);
+                            continue;
+                        }
                         memos.add(memoTemp);
                     }
                 } catch (ClassNotFoundException e) {
@@ -360,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
     private void createTextMemo() {
         final EditText input = new EditText(getApplicationContext());
         input.setSingleLine();
+        input.setTextColor(Color.BLACK);
 
         Utilities.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
             @Override
@@ -385,8 +414,8 @@ public class MainActivity extends AppCompatActivity {
     private void createAudioMemo() {
         final AudioRecorder aR = new AudioRecorder();
         final ImageButton recordButton = new ImageButton(getApplicationContext());
-        // TODO: change recording layout? At least buttons should have the same size no matter which icon showing
-        recordButton.setImageResource(android.R.drawable.ic_btn_speak_now);
+        recordButton.setImageResource(android.R.drawable.btn_star_big_off);
+
         final AlertDialog recorder = Utilities.showAlert(MainActivity.this, "Record Memo", null, "Cancel", recordButton, null);
         recorder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -398,7 +427,8 @@ public class MainActivity extends AppCompatActivity {
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recordButton.setImageResource(android.R.drawable.ic_notification_overlay);
+                recordButton.setImageResource(android.R.drawable.btn_star_big_on);
+                aR.setOUTPUT_FILE_DIR(appFolder.getPath());
                 aR.setRecorder();
                 aR.startRecord();
                 recordButton.setOnClickListener(new View.OnClickListener() {
@@ -408,18 +438,22 @@ public class MainActivity extends AppCompatActivity {
                         recorder.dismiss();
                         final EditText input = new EditText(getApplicationContext());
                         input.setSingleLine();
+                        input.setTextColor(Color.BLACK);
 
                         AlertDialog alert = Utilities.showAlert(MainActivity.this, "Please insert a name", "OK", "Cancel", input, new Callable<Void>() {
                             @Override
                             public Void call() throws Exception {
                                 // Add new Memo
                                 AudioMemo m = new AudioMemo(memos.size(), input.getText().toString());
+                                m.setFileDir(appFolder.getPath());
                                 memos.add(memos.size(), m);
+
+                                // Rename File
+                                File temp = aR.getOutFile();
+                                Utilities.moveFile(temp, m.getData());
+
                                 saveAll();
                                 buildLayout();
-                                // Rename File
-                                File temp = new File(AudioRecorder.OUTPUT_FILE);
-                                Utilities.moveFile(temp, m.getData());
                                 // Start PlayDialog
                                 playMemo(m);
                                 return null;
@@ -441,9 +475,9 @@ public class MainActivity extends AppCompatActivity {
      * Removes the temporary audio file after recording was cancelled
      */
     private void cleanUp(AudioRecorder aR) {
-        // TODO BUG: not deleting the temp file correctly yet.. Debug?!
+        // TODO BUG: not deleting the temp file correctly yet.. Debug?! (also bei mir schon Frido)
         aR.stopRecord();
-        File temp = new File(AudioRecorder.OUTPUT_FILE);
+        File temp = new File(appFolder.getPath());
         Utilities.delete(temp);
     }
 
