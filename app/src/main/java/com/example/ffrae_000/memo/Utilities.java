@@ -21,19 +21,19 @@ abstract class Utilities {
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
+            //Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
     /**
      * Function to easily create an AlertDialog
      *
-     * @param context Calling Activity
-     * @param message Message to display
+     * @param context  Calling Activity
+     * @param message  Message to display
      * @param positive Message for the positive button. Iff no positive button is used null is required
      * @param negative Mesage for the negative button. If no negative button is used null is required
-     * @param view Any additional GUI elements for the AlertDialog. If none used null is required
-     * @param result A Callable<Void>() function, which is called if the positive button is clicked
+     * @param view     Any additional GUI elements for the AlertDialog. If none used null is required
+     * @param result   A Callable<Void>() function, which is called if the positive button is clicked
      * @return The created and shown AlertDialog is returned.
      */
     static AlertDialog showAlert(Context context, String message, String positive, String negative,
@@ -89,6 +89,7 @@ abstract class Utilities {
 
     /**
      * Function to delete a File
+     *
      * @param delfile File to delete
      */
     static void delete(File delfile) {
@@ -128,9 +129,9 @@ abstract class Utilities {
      * <p>
      * If the app does not has permission then the user will be prompted to grant permissions
      *
-     * @param activity
+     * @param activity The activity in which the code is being executed
      */
-    public static void verifyStoragePermissions(Activity activity) {
+    static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -145,9 +146,9 @@ abstract class Utilities {
     }
 
 
-
     /**
      * Function to convert milliseconds time to Timer Format Hours:Minutes:Seconds
+     *
      * @param milliseconds Number of miliseconds to convert
      * @return A time-formatted String is returned.
      */
