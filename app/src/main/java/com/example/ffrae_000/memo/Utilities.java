@@ -20,8 +20,8 @@ abstract class Utilities {
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            //Manifest.permission.READ_EXTERNAL_STORAGE,
+    private static final String[] PERMISSIONS_STORAGE = {
+            //Manifest.permission.READ_EXTERNAL_STORAGE,            // ONLY usable for API 16+
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 

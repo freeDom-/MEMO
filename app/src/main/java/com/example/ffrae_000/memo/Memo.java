@@ -4,7 +4,7 @@ import java.util.Date;
 
 class Memo implements java.io.Serializable, Comparable<Memo> {
 
-    private int id;
+    private final int id;
     private String name;
     private Date date;
 

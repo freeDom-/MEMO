@@ -4,14 +4,9 @@ import java.io.File;
 
 class AudioMemo extends Memo {
     private File data;
-    private String dir = null;
-    private String n;
-    private int i;
 
     AudioMemo(int id, String name) {
         super(id, name);
-        n = name;
-        i = id;
     }
 
     public File getData() {
@@ -19,7 +14,6 @@ class AudioMemo extends Memo {
     }
 
     public void setFileDir(String path) {
-        dir = path;
-        data = new File(dir + File.separator + n + i + ".3gpp");
+        data = new File(path + File.separator + super.getName() + super.getId() + ".3gpp");
     }
 }

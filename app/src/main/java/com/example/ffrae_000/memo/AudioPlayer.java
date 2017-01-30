@@ -9,31 +9,27 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 // TODO: AudioPlayer/Recorder crashes when adding an AudioMemo in API 25
 
 class AudioPlayer {
-    private MediaPlayer mP;
-    private Runnable timedUpdate;
-    private Handler seekHandler = new Handler();
+    private final MediaPlayer mP;
+    private final Runnable timedUpdate;
+    private final Handler seekHandler = new Handler();
+    private final String finalTime;
     private boolean isPlaying;  // required for seeking
     // Layout
     private String currentTime;
-    private String finalTime;
     private TextView time;
     private SeekBar seekBar;
     private ImageButton playPauseBtn;
 
-    AudioPlayer(String path) throws FileNotFoundException {
+    AudioPlayer(String path) throws IOException {
         mP = new MediaPlayer();
-        try {
-            mP.setDataSource(path);
-            mP.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mP.setDataSource(path);
+        mP.prepare();
+
         isPlaying = false;
         currentTime = Utilities.milliSecondsToTimer(mP.getCurrentPosition());
         finalTime = Utilities.milliSecondsToTimer(mP.getDuration());
@@ -58,7 +54,7 @@ class AudioPlayer {
     /**
      * Creates the Layout of the player
      *
-     * @param context
+     * @param context The context in which the layout should be created
      * @return The root LinearLayout of the AudioPlayer is returned.
      */
     public LinearLayout createLayout(Context context) {
@@ -99,6 +95,8 @@ class AudioPlayer {
             public void onStartTrackingTouch(SeekBar seekBar) {
                 if (mP.isPlaying()) {
                     mP.pause();
+                    // disabling updating Seekbar
+                    seekHandler.removeCallbacks(timedUpdate);
                 }
             }
 
@@ -108,6 +106,8 @@ class AudioPlayer {
                 // Start playing if it was playing before seeking
                 if (isPlaying) {
                     mP.start();
+                    // re-enabling updating Seekbar
+                    timedUpdate.run();
                 }
             }
         });
@@ -126,12 +126,10 @@ class AudioPlayer {
         playPauseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mP != null) {
-                    if (mP.isPlaying()) {
-                        pausePlaying();
-                    } else {
-                        startPlaying();
-                    }
+                if (mP.isPlaying()) {
+                    pausePlaying();
+                } else {
+                    startPlaying();
                 }
             }
         });
@@ -150,7 +148,7 @@ class AudioPlayer {
      */
     private void startPlaying() {
         mP.start();
-        seekHandler.post(timedUpdate);
+        timedUpdate.run();
         playPauseBtn.setImageResource(android.R.drawable.ic_media_pause);
         isPlaying = true;
     }

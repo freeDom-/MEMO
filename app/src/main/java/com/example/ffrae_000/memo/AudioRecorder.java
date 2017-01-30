@@ -9,20 +9,18 @@ import java.io.IOException;
 import static android.content.ContentValues.TAG;
 
 class AudioRecorder {
-    private String OUTPUT_FILE_DIR;
+    private String outputFileDir;
     private MediaRecorder mR = null;
     private boolean isStarted = false;
     private File outFile = null;
 
-    AudioRecorder() {
-    }
-
     /**
-     * Prepares the AudioRecorder
+     * Prepares the AudioRecorder.
+     * setOutputFileDir() must be called first in order for this method to work!
      */
     public void setRecorder() {
 
-        outFile = new File(OUTPUT_FILE_DIR + File.separator + "temp.3gpp");
+        outFile = new File(outputFileDir + File.separator + "temp.3gpp");
 
         if (outFile.exists()) {
             Utilities.delete(outFile);
@@ -115,7 +113,7 @@ class AudioRecorder {
         return outFile;
     }
 
-    public void setOUTPUT_FILE_DIR(String dir) {
-        this.OUTPUT_FILE_DIR = dir;
+    public void setOutputFileDir(String dir) {
+        this.outputFileDir = dir;
     }
 }

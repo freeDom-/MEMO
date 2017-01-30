@@ -25,7 +25,6 @@ import com.thoughtworks.xstream.XStream;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -41,29 +40,29 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
 
-    File appFolder;
-    private List<Memo> memos = new LinkedList<>();
-    private List<AudioMemo> notFoundAudioMemo = new LinkedList<>();
-    private String OUTPUT_DIR = Environment.getExternalStorageDirectory() + File.separator + "MEMO";
-    private String OUTPUT_DIR_NO_SD;
+    private final List<Memo> memos = new LinkedList<>();
+    private final List<AudioMemo> notFoundAudioMemo = new LinkedList<>();
+    private File appFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String outputDirNoSD, outputDir;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO: remove if we dont use settings
+        // TODO: remove if we don't use settings
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
 
         Utilities.verifyStoragePermissions(this);
-
-        OUTPUT_DIR_NO_SD = getFilesDir() + File.separator + "MEMO";
+        outputDirNoSD = getFilesDir() + File.separator + "MEMO";
+        outputDir = Environment.getExternalStorageDirectory() + File.separator + "MEMO";
 
         if (Utilities.externalStoragecheck()) {
-            appFolder = new File(OUTPUT_DIR);
+            appFolder = new File(outputDir);
         } else {
-            appFolder = new File(OUTPUT_DIR_NO_SD);
+            appFolder = new File(outputDirNoSD);
         }
         if (!appFolder.exists()) {
             Utilities.createDirectory(appFolder);
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO: remove if we dont use settings
+        // TODO: remove if we don't use settings
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: remove if we dont use settings
+        // TODO: remove if we don't use settings
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -428,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 recordButton.setImageResource(android.R.drawable.btn_star_big_on);
-                aR.setOUTPUT_FILE_DIR(appFolder.getPath());
+                aR.setOutputFileDir(appFolder.getPath());
                 aR.setRecorder();
                 aR.startRecord();
                 recordButton.setOnClickListener(new View.OnClickListener() {
@@ -492,7 +491,7 @@ public class MainActivity extends AppCompatActivity {
         // Show an error and return if the audio file was not found
         try {
             aP = new AudioPlayer(m.getData().getPath());
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             // TODO: not working?? App still crashes if the file was deleted (manually) and thus not found....
             Utilities.showAlert(MainActivity.this, "File " + m.getData().getPath() + " not found!", "OK", null, null, null);
             return;

@@ -26,7 +26,7 @@ public class TextActivity extends AppCompatActivity {
         Intent intent = getIntent();
         memo = (TextMemo) intent.getSerializableExtra("TextMemo");
 
-        // TODO: set toolbars title to Memos name (only available in API 21?)
+        // TODO: set toolbars title to Memos name (only available in API 21?) - workaround: using Label
         // toolbar = (Toolbar) findViewById(R.id.toolbarText);
         // toolbar.setTitle(memo.getName());
 
