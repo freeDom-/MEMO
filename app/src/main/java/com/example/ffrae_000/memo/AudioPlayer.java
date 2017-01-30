@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+// TODO: AudioPlayer/Recorder crashes when adding an AudioMemo in API 25
+
 class AudioPlayer {
     private MediaPlayer mP;
     private Runnable timedUpdate;
@@ -95,12 +97,13 @@ class AudioPlayer {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                mP.pause();
+                if (mP.isPlaying()) {
+                    mP.pause();
+                }
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO BUG: app crashes if start wasnt pressed before seeking or audio finished (stopped) before seeking
                 mP.seekTo(seekBar.getProgress());
                 // Start playing if it was playing before seeking
                 if (isPlaying) {

@@ -31,9 +31,8 @@ class AudioRecorder {
         mR = new MediaRecorder();
         mR.setAudioSource(MediaRecorder.AudioSource.MIC);
         mR.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mR.setOutputFile(outFile.getPath());
         mR.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
+        mR.setOutputFile(outFile.getPath());
 
         try {
             mR.prepare();
