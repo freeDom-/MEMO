@@ -443,8 +443,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public Void call() throws Exception {
                                 // Add new Memo
-                                AudioMemo m = new AudioMemo(memos.size(), input.getText().toString());
-                                m.setFileDir(appFolder.getPath());
+                                AudioMemo m = new AudioMemo(memos.size(), input.getText().toString(), appFolder.getPath());
                                 memos.add(memos.size(), m);
 
                                 // Rename File

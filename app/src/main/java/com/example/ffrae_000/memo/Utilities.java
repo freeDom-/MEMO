@@ -120,8 +120,7 @@ abstract class Utilities {
      */
 
     static boolean externalStoragecheck() {
-        //TODO: maybe check if there's enough space
-        return !Environment.isExternalStorageEmulated();
+        return Environment.getExternalStorageState().compareTo(Environment.MEDIA_MOUNTED) == 0;
     }
 
     /**
