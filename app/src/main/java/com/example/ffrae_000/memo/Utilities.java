@@ -124,7 +124,13 @@ abstract class Utilities {
      */
 
     static boolean externalStoragecheck() {
-        return Environment.getExternalStorageState().compareTo(Environment.MEDIA_MOUNTED) == 0;
+        boolean bool = false;
+        if (Environment.isExternalStorageRemovable()) {
+            if (!Environment.isExternalStorageEmulated()) {
+                bool = Environment.getExternalStorageState().compareTo(Environment.MEDIA_MOUNTED) == 0;
+            }
+        }
+        return bool;
     }
 
     /**
