@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Utilities.verifyStoragePermissions(this);
-        outputDirNoSD = getFilesDir() + File.separator + "MEMO";
+        outputDirNoSD = getObbDir() + File.separator + "MEMO";
         outputDir = getExternalCacheDir() + File.separator + "MEMO";
 
         if (Utilities.externalStoragecheck()) {
