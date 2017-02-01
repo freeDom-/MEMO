@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -161,13 +160,7 @@ public class MainActivity extends AppCompatActivity {
         loadAll();
         // Create a copy of the data and sort it
         List<Memo> temp = new LinkedList<>(memos);
-        Collections.sort(temp, new Comparator<Memo>() {
-            @Override
-            public int compare(Memo memo, Memo t1) {
-                // sort by date inverse -> newest entry will be first
-                return t1.compareTo(memo);
-            }
-        });
+        Collections.sort(temp);
         // Iterate through the sorted copy and create the GUI buttons
         for (Memo m : temp) {
             addButtons(m);
@@ -393,8 +386,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Void call() throws Exception {
                 //Add new TextMemo
-                TextMemo m = new TextMemo(memos.size(), input.getText().toString());
-                memos.add(memos.size(), m);
+                TextMemo m = new TextMemo(Utilities.getNextId(memos), input.getText().toString());
+                memos.add(Utilities.getNextId(memos), m);
                 saveAll();
                 buildLayout();
                 // Start TextActivity
@@ -443,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public Void call() throws Exception {
                                 // Add new Memo
-                                AudioMemo m = new AudioMemo(memos.size(), input.getText().toString(), appFolder.getPath());
+                                AudioMemo m = new AudioMemo(Utilities.getNextId(memos), input.getText().toString(), appFolder.getPath());
                                 memos.add(memos.size(), m);
 
                                 // Rename File

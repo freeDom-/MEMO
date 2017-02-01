@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static android.content.ContentValues.TAG;
@@ -175,5 +179,24 @@ abstract class Utilities {
 
         // return timer string
         return finalTimerString;
+    }
+
+    static int getNextId(List<Memo> memos) {
+        int nextId = 0;
+        List<Memo> temp = new LinkedList<>(memos);
+
+        // Sort memos by their id
+        Collections.sort(temp, new Comparator<Memo>() {
+            @Override
+            public int compare(Memo memo, Memo t1) {
+                return Integer.valueOf(memo.getId()).compareTo(t1.getId());
+            }
+        });
+
+        for (Memo m : temp) {
+            if (m.getId() != nextId) break;
+            else nextId++;
+        }
+        return nextId;
     }
 }

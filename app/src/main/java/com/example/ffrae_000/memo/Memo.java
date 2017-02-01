@@ -15,7 +15,8 @@ class Memo implements java.io.Serializable, Comparable<Memo> {
     }
 
     public int compareTo(Memo m) {
-        return date.compareTo(m.getDate());
+        // Sort in reversed order, newest date first
+        return date.compareTo(m.getDate()) * (-1);
     }
 
     public int getId() {
