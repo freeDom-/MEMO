@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -85,6 +84,7 @@ abstract class Utilities {
      */
     static void moveFile(File oldName, File newName) {
         if (oldName.exists()) {
+            newName.setReadable(true);
             if (!oldName.renameTo(newName)) {
                 Log.i(TAG, "Could not rename " + oldName.getPath() + " into " + newName.getPath());
             }
@@ -123,15 +123,16 @@ abstract class Utilities {
      * @return a Boolean which is true if there is External Storage available
      */
 
-    static boolean externalStoragecheck() {
+    /*static boolean externalStoragecheck() {
         boolean bool = false;
         if (Environment.isExternalStorageRemovable()) {
             if (!Environment.isExternalStorageEmulated()) {
                 bool = Environment.getExternalStorageState().compareTo(Environment.MEDIA_MOUNTED) == 0;
+                Environment.
             }
         }
         return bool;
-    }
+    }*/
 
     /**
      * Checks if the app has permission to write to device storage
@@ -187,9 +188,11 @@ abstract class Utilities {
         return finalTimerString;
     }
 
-    static int getNextId(List<Memo> memos) {
+    static int getNextId(List<Memo> memos, List<Memo> nfm) {
+
         int nextId = 0;
         List<Memo> temp = new LinkedList<>(memos);
+        temp.addAll(nfm);
 
         // Sort memos by their id
         Collections.sort(temp, new Comparator<Memo>() {

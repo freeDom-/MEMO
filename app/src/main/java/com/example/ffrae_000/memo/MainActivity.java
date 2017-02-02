@@ -39,7 +39,7 @@ import static android.content.ContentValues.TAG;
 public class MainActivity extends AppCompatActivity {
 
     private final List<Memo> memos = new LinkedList<>();
-    private final List<AudioMemo> notFoundAudioMemo = new LinkedList<>();
+    private final List<Memo> notFoundAudioMemo = new LinkedList<>();
     private File appFolder;
 
     @Override
@@ -54,14 +54,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Utilities.verifyStoragePermissions(this);
-        outputDirNoSD = getCacheDir() + File.separator + "MEMO";
-        outputDir = getExternalCacheDir() + File.separator + "MEMO";
+        //outputDirNoSD =  getFilesDir() + File.separator + "MEMO";
+        outputDir = getExternalFilesDir(null).getAbsolutePath();
 
-        if (Utilities.externalStoragecheck()) {
+        //if (Utilities.externalStoragecheck()) {
             appFolder = new File(outputDir);
-        } else {
+        /*} else {
             appFolder = new File(outputDirNoSD);
-        }
+        }*/
         if (!appFolder.exists()) {
             Utilities.createDirectory(appFolder);
         }
@@ -317,13 +317,13 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = xstream.createObjectOutputStream(fos);
 
-            if (Utilities.externalStoragecheck()) {
-                for (AudioMemo nfm : notFoundAudioMemo) {
-                    if (!nfm.getData().exists()) {
+            /*if (Utilities.externalStoragecheck()) {
+                for (Memo nfm : notFoundAudioMemo) {
+                    if (!((AudioMemo) nfm).getData().exists()) {
                         notFoundAudioMemo.remove(nfm);
                     }
                 }
-            }
+            }*/
             memos.addAll(notFoundAudioMemo);
             notFoundAudioMemo.clear();
 
@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
                     while (true) {
                         memoTemp = (Memo) ois.readObject();
                         if (memoTemp instanceof AudioMemo && !((AudioMemo) memoTemp).getData().exists()) {
-                            notFoundAudioMemo.add((AudioMemo) memoTemp);
+                            notFoundAudioMemo.add(memoTemp);
                             continue;
                         }
                         memos.add(memoTemp);
@@ -385,8 +385,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Void call() throws Exception {
                 //Add new TextMemo
-                TextMemo m = new TextMemo(Utilities.getNextId(memos), input.getText().toString());
-                memos.add(Utilities.getNextId(memos), m);
+                TextMemo m = new TextMemo(Utilities.getNextId(memos, notFoundAudioMemo), input.getText().toString());
+                memos.add(Utilities.getNextId(memos, notFoundAudioMemo), m);
                 saveAll();
                 buildLayout();
                 // Start TextActivity
@@ -435,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public Void call() throws Exception {
                                 // Add new Memo
-                                AudioMemo m = new AudioMemo(Utilities.getNextId(memos), input.getText().toString(), appFolder.getPath());
+                                AudioMemo m = new AudioMemo(Utilities.getNextId(memos, notFoundAudioMemo), input.getText().toString(), appFolder.getPath());
                                 memos.add(memos.size(), m);
 
                                 // Rename File
